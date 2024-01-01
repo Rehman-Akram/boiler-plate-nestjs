@@ -23,8 +23,6 @@ For swagger documentation, @nestjs/swagger plugin is used in nest-cli with suita
 
 ## Running the app
 
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
+$ npm run start 
+or
+$ npm run start:dev (watch mode)
