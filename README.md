@@ -1,5 +1,5 @@
 # Boiler-plate
-Boiler plate for nest js with postgres
+Boiler plate for nest js with postgres. It provides users module and auth module with jwt authentication using passport jwt strategy
 
 # Database
 1. PostgreSQL 
@@ -26,3 +26,9 @@ For swagger documentation, @nestjs/swagger plugin is used in nest-cli with suita
 $ npm run start 
 or
 $ npm run start:dev (watch mode)
+
+## migrations
+1. use package.json scripts to generate, create, run & revert migrations
+
+## Authentication
+For authentication JWT is used with passport strategy

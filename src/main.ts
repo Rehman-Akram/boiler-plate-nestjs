@@ -16,6 +16,7 @@ async function bootstrap() {
     .setDescription('Apis for boiler plate')
     .setVersion('1.0')
     .addTag('Boiler plate App')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
