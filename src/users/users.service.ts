@@ -3,9 +3,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
-import { USER_NOT_FOUND } from 'src/shared/constants/constants';
-import { CreateUserDto } from 'src/auth/dto/create-user.dto';
-import { NotFoundError } from 'src/shared/errors/not-found.error';
+import { CreateUserDto } from '../auth/dto/create-user.dto';
+import { NotFoundError } from '../shared/errors/not-found.error';
+import { ERRORS } from '../shared/constants/constants';
 
 @Injectable()
 export class UsersService {
@@ -25,7 +25,7 @@ export class UsersService {
       const userInstance = this.userRepo.create(user);
       return this.userRepo.save(userInstance);
     } catch (error) {
-      Logger.error('Error in create function of user service');
+      Logger.error(`Error in create function of user service where user: ${JSON.stringify(user)} `);
       throw error;
     }
   }
@@ -47,7 +47,12 @@ export class UsersService {
       }
       return false;
     } catch (error) {
-      Logger.error('Error in findUserByEmailPhone');
+      Logger.error(
+        `Error in findUserByEmailPhone of user service where credentials: ${JSON.stringify({
+          email,
+          phoneNumber,
+        })}`,
+      );
       throw error;
     }
   }
@@ -67,7 +72,7 @@ export class UsersService {
         },
       });
     } catch (error) {
-      Logger.error('Error in findOneById');
+      Logger.error(`Error in findOneById of user service where id: ${id}`);
       throw error;
     }
   }
@@ -87,7 +92,12 @@ export class UsersService {
       }
       return query.getOne();
     } catch (error) {
-      Logger.error('Error in findUserByEmail');
+      Logger.error(
+        `Error in findUserByEmail of user service where credentials: ${JSON.stringify({
+          email,
+          isPasswordRequired,
+        })}`,
+      );
       throw error;
     }
   }
@@ -103,12 +113,14 @@ export class UsersService {
     try {
       const user = await this.findOneById(id);
       if (!user) {
-        throw new NotFoundError(USER_NOT_FOUND);
+        throw new NotFoundError(ERRORS.USER_NOT_FOUND);
       } else {
         return this.userRepo.update(id, data);
       }
     } catch (error) {
-      Logger.error('Error in update of user service');
+      Logger.error(
+        `Error in update of user service where id: ${id} and data: ${JSON.stringify(data)}`,
+      );
       throw error;
     }
   }

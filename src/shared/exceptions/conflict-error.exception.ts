@@ -8,7 +8,7 @@ export class ConflictExceptionFilter implements ExceptionFilter {
   catch(exception: ConflictError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-
+    console.log(exception);
     response.status(HttpStatus.CONFLICT).json({
       statusCode: HttpStatus.CONFLICT,
       timestamp: new Date().toISOString(),
