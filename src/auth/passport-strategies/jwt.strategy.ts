@@ -1,13 +1,19 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TokenPayload } from '../auth.interface';
-import { JWT_SECRET } from 'src/shared/constants/constants';
+import { ERRORS, JWT_SECRET } from '../../shared/constants/constants';
+import { NotFoundError, UnauthroizedError } from '../../shared/errors';
+import { UserEntity } from '../../users/entities/user.entity';
+import { UsersService } from '../../users/users.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(readonly configService: ConfigService) {
+  constructor(
+    readonly configService: ConfigService,
+    private readonly userService: UsersService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -15,7 +21,20 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(payload: TokenPayload): TokenPayload {
-    return { id: payload.id };
+  async validate(payload: TokenPayload): Promise<UserEntity> {
+    try {
+      const { id } = payload;
+      if (!id) {
+        throw new UnauthroizedError(ERRORS.INVALID_TOKEN);
+      }
+      const user = await this.userService.findOneById(id);
+      if (!user) {
+        throw new NotFoundError(ERRORS.INVALID_TOKEN);
+      }
+      return user;
+    } catch (error) {
+      Logger.error(`Error in validate of jwt strategy where payload: ${JSON.stringify(payload)}`);
+      throw error;
+    }
   }
 }

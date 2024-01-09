@@ -8,7 +8,7 @@ export class BadRequestExceptionFilter implements ExceptionFilter {
   catch(exception: BadRequestError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-
+    console.log(exception);
     response.status(HttpStatus.BAD_REQUEST).json({
       statusCode: HttpStatus.BAD_REQUEST,
       timestamp: new Date().toISOString(),

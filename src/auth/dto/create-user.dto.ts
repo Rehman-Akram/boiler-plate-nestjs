@@ -9,8 +9,9 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { UserRole } from 'src/users/enums/user-role.enum';
-import { UserStatus } from 'src/users/enums/user.enum';
+import { REGEX } from '../../shared/constants/constants';
+import { UserRole } from '../../users/enums/user-role.enum';
+import { UserStatus } from '../../users/enums/user.enum';
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
@@ -40,7 +41,7 @@ export class CreateUserDto {
   @IsString()
   @MaxLength(20, { message: 'Must be less than 20 characters' })
   @MinLength(8, { message: 'Must be greator than 8 characters' })
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/, {
+  @Matches(REGEX.PASSWORD, {
     message:
       'Password must contain at least one lowercase letter, one uppercase letter, one special character',
   })

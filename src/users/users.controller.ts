@@ -3,8 +3,8 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';
-import { NotFoundError } from 'src/shared/errors/not-found.error';
-import { USER_NOT_FOUND } from 'src/shared/constants/constants';
+import { NotFoundError } from '../shared/errors/not-found.error';
+import { ERRORS } from '../shared/constants/constants';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -28,12 +28,11 @@ export class UsersController {
     try {
       const user = await this.usersService.findOneById(id);
       if (!user) {
-        throw new NotFoundError(USER_NOT_FOUND);
+        throw new NotFoundError(ERRORS.USER_NOT_FOUND);
       }
       return user;
     } catch (error) {
-      Logger.error('Error in findById of user controller');
-      console.log(error);
+      Logger.error(`Error in findById of user controller where id: ${id}`);
       throw error;
     }
   }

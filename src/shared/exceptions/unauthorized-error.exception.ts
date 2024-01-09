@@ -8,7 +8,7 @@ export class UnauthorizedExceptionFilter implements ExceptionFilter {
   catch(exception: UnauthroizedError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-
+    console.log(exception);
     response.status(HttpStatus.UNAUTHORIZED).json({
       statusCode: HttpStatus.UNAUTHORIZED,
       timestamp: new Date().toISOString(),

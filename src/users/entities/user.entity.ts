@@ -7,7 +7,7 @@ import {
   Index,
 } from 'typeorm';
 import { UserStatus } from '../enums/user.enum';
-import { PasswordTransformer, TrimLowerTransformer } from 'src/shared/transformers';
+import { PasswordTransformer, TrimLowerTransformer } from '../../shared/transformers';
 import { UserRole } from '../enums/user-role.enum';
 import { ApiProperty } from '@nestjs/swagger';
 

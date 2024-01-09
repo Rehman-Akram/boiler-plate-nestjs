@@ -1,13 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { UserEntity } from '../users/entities/user.entity';
 import {
   JWT_SECRET,
   ACCESS_TOKEN_EXPIRY_TIME_IN_HOURS,
-  USER_ALREADY_EXISTS,
   ERRORS,
-  USER_NOT_FOUND,
 } from 'src/shared/constants/constants';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UserWithToken } from './dto/user-with-token.dto';
@@ -15,7 +13,7 @@ import * as bcrypt from 'bcrypt';
 import { TokenPayload } from './auth.interface';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
-import { ConflictError, NotFoundError, PasswordMismatchError } from 'src/shared/errors';
+import { ConflictError, NotFoundError, PasswordMismatchError } from '../shared/errors';
 
 @Injectable()
 export class AuthService {
@@ -38,13 +36,14 @@ export class AuthService {
         createUser.phoneNumber,
       );
       if (existingUser) {
-        throw new ConflictError(USER_ALREADY_EXISTS);
+        throw new ConflictError(ERRORS.USER_ALREADY_EXISTS);
       }
       // create user
       return this.userService.create(createUser);
     } catch (error) {
-      Logger.error('Error in createUser of AuthService');
-      console.log(error);
+      Logger.error(
+        `Error in createUser of AuthService where createUserDto: ${JSON.stringify(createUser)}`,
+      );
       throw error;
     }
   }
@@ -68,8 +67,12 @@ export class AuthService {
       // response
       return { user, access_token: token };
     } catch (error) {
-      Logger.error('Error in loginUser of AuthService');
-      console.log(error);
+      Logger.error(
+        `Error in loginUser of AuthService where login credentials are ${JSON.stringify({
+          email,
+          password,
+        })}`,
+      );
       throw error;
     }
   }
@@ -84,9 +87,9 @@ export class AuthService {
   async checkUserForLogin(email: string, password: string): Promise<UserEntity> {
     try {
       // get user by email along with password
-      const user = await this.userService.findUserByEmail(email.toLowerCase().trim(), true);
+      const user = await this.userService.findUserByEmail(email, true);
       if (!user) {
-        throw new NotFoundError(USER_NOT_FOUND);
+        throw new NotFoundError(ERRORS.USER_NOT_FOUND);
       }
       // verify password
       const isPasswordVerified = await this.verifyPassword(user.password, password);
@@ -97,8 +100,12 @@ export class AuthService {
       delete user.password;
       return user;
     } catch (error) {
-      Logger.error('Error in checkUserForLogin');
-      console.log(error);
+      Logger.error(
+        `Error in checkUserForLogin of auth service where credentials are ${JSON.stringify({
+          email,
+          password,
+        })}`,
+      );
       throw error;
     }
   }

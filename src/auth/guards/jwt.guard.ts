@@ -1,21 +1,16 @@
 import { CanActivate, ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { UsersService } from 'src/users/users.service';
-import { TokenPayload } from '../auth.interface';
 import { Reflector } from '@nestjs/core';
-import { ERRORS } from 'src/shared/constants/constants';
-import { NotFoundError, UnauthroizedError } from 'src/shared/errors';
+import { ERRORS } from '../../shared/constants/constants';
+import { UnauthroizedError } from '../../shared/errors';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
-  constructor(
-    private readonly userService: UsersService,
-    private readonly reflector: Reflector,
-  ) {
-    super(); // This is required to call the constructor of parent class where authentication is being done.
+  constructor(private readonly reflector: Reflector) {
+    super(); // This is required as constructors for derived classed must conatin a super call
   }
 
-  async canActivate(context: ExecutionContext) {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     try {
       // checking if route is public
       const isPublic = this.reflector.get<string>('isPublic', context.getHandler());
@@ -23,21 +18,30 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
         return true;
       }
       // if route is not public
-      const tokenUser: TokenPayload = context.switchToHttp().getRequest().user;
-      if (!tokenUser) {
+      const incomingRequest = context.switchToHttp().getRequest();
+      const token = this.extractTokenFromHeader(incomingRequest);
+      if (!token) {
+        throw new UnauthroizedError(ERRORS.TOKEN_NOT_FOUND);
+      }
+      const isTokenValid = (await super.canActivate(context)) as boolean; // calling jwt strategy to validate token
+      if (!isTokenValid) {
         throw new UnauthroizedError(ERRORS.INVALID_TOKEN);
       }
-      const user = await this.userService.findOneById(tokenUser.id);
-      if (!user) {
-        throw new NotFoundError(ERRORS.INVALID_TOKEN);
-      }
-      // updating request with complete user object
-      context.switchToHttp().getRequest().user = user;
       return true;
     } catch (error) {
-      Logger.error('Error in canActivate of JwtAuthGuard');
-      console.log(error);
+      Logger.error(`Error in canActivate of JwtAuthGuard`);
       throw error;
     }
+  }
+  /**
+   * This function is used to extract authorization header from incoming request
+   *
+   * @param request
+   * @returns
+   */
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] =
+      (request.headers['authorization'] && request.headers['authorization'].split(' ')) ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }
