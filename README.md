@@ -1,5 +1,34 @@
 # Boiler-plate
-Boiler plate for nest js with postgres. It provides users module and auth module with jwt authentication using passport jwt strategy
+Boiler plate for nest js with postgres. It has two branches. 
+
+# Branches
+
+## Master branch
+
+Master branch contains following
+
+1. Users module
+2. Auth module (JwtAuth Guard)
+3. Passport jwt strategy
+4. Seeders (users)
+5. Global exception handling 
+
+## User-roles-with-rbac
+
+This branch have following 
+
+1. Auth module (JwtAuth Guard, Permission Guard)
+2. Files module (for uploading and downloading of files in AWS bucket using signed urls)
+3. Groups module
+4. Permissions module (with rbac)
+5. Roles module
+6. Shared module (includes email service, aws service, custom decorators, templates, transformers, etc.)
+8. Users module
+9. Users-group module
+10. Users-role module
+11. Seeders (users, roles, permissions)
+12. Passport jwt strategy
+13. Global exception handling
 
 # Database
 1. PostgreSQL 
