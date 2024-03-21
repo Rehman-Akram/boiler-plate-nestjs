@@ -15,7 +15,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly userService: UsersService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: (req) => {
+        // Check cookies for the bearer token first
+        const tokenFromCookies = req.cookies && req.cookies.token;
+        if (tokenFromCookies) {
+          return tokenFromCookies;
+        }
+        // If not found in cookies, extract from the Authorization header
+        return ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+      },
       ignoreExpiration: false,
       secretOrKey: configService.get<string>(JWT_SECRET),
     });

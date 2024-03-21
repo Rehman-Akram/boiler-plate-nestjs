@@ -1,23 +1,22 @@
-import { join } from 'path';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 export default () => {
-  const databasePG = {
-    type: 'postgres',
-    host: process.env.DATABASE_HOST,
-    port: parseInt(process.env.DATABASE_PORT, 10),
-    username: process.env.DATABASE_USERNAME,
-    password: process.env.DATABASE_PASSWORD,
-    migrationsRun: true,
-    autoLoadEntities: true,
-    logging: true,
-    migrations: [join(__dirname, '../migrations', '*{ts,js}')],
-    entities: [join(__dirname, '**', '*.entity.{ts,js}')],
+  const emailConfig = {
+    service: process.env['EMAIL_SERVICE'],
+    auth: {
+      user: process.env['FROM_EMAIL'],
+      pass: process.env['EMAIL_APP_PASSWORD'],
+    },
+  };
+  const awsS3Config = {
+    accessKeyId: process.env['AWS_ACCESS_KEY'],
+    secretAccessKey: process.env['AWS_SECRET_KEY'],
+    region: process.env['AWS_REGION'],
+    awsS3bucket: process.env['AWS_BUCKET'],
   };
   return {
-    PORT: parseInt(process.env.PORT, 10),
-    databasePG,
-    get(key: string): string {
-      return process.env[key];
-    },
+    emailConfig,
+    awsS3Config,
   };
 };

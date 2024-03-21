@@ -14,6 +14,13 @@ import {
   UnauthorizedExceptionFilter,
 } from './shared/exceptions';
 import { AuthModule } from './auth/auth.module';
+import { RolesModule } from './roles/roles.module';
+import { UsersGroupsModule } from './users-groups/users-groups.module';
+import { UsersRolesModule } from './users-roles/users-roles.module';
+import { GroupsModule } from './groups/groups.module';
+import { PermissionsModule } from './permissions/permissions.module';
+import { PermissionGuard } from './auth/guards/permission.guard';
+import { FilesModule } from './files/files.module';
 
 const globalFilters = [
   ConflictExceptionFilter,
@@ -38,11 +45,21 @@ const globalFilters = [
     }),
     AuthModule,
     UsersModule,
+    RolesModule,
+    UsersGroupsModule,
+    UsersRolesModule,
+    GroupsModule,
+    PermissionsModule,
+    FilesModule,
   ],
   providers: [
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionGuard,
     },
     ...globalFilters,
   ],

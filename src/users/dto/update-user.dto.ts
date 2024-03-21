@@ -1,4 +1,6 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
-import { CreateUserDto } from '../../auth/dto/create-user.dto';
+import { OmitType, PartialType } from '@nestjs/swagger';
+import { UserEntity } from '../entities/user.entity';
 
-export class UpdateUserDto extends PartialType(OmitType(CreateUserDto, ['password'])) {}
+export class UpdateUserDto extends PartialType(
+  OmitType(UserEntity, ['email', 'createdAt', 'updatedAt', 'phoneVerified', 'emailVerified']),
+) {}
