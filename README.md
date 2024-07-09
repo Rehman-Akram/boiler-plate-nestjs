@@ -52,8 +52,9 @@ For swagger documentation, @nestjs/swagger plugin is used in nest-cli with suita
 
 ## Running the app
 
-1. run migrations using package.json
-2. run seeders using package.json
+1. create db and update env accordingly
+2. run migrations using package.json script
+3. run seeders using package.json script
 
 $ npm run start 
 or
