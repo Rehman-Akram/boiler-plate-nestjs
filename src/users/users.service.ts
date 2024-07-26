@@ -39,7 +39,7 @@ export class UsersService {
    */
   async findUserByEmailPhone(email: string, phoneNumber: string): Promise<boolean> {
     try {
-      const user = await this.userRepo.find({
+      const user = await this.userRepo.findOne({
         where: [{ email }, { phoneNumber }],
       });
       if (user) {
@@ -86,7 +86,7 @@ export class UsersService {
    */
   async findUserByEmail(email: string, isPasswordRequired?: boolean): Promise<UserEntity> {
     try {
-      const query = this.userRepo.createQueryBuilder('user').where(email);
+      const query = this.userRepo.createQueryBuilder('user').where({ email });
       if (isPasswordRequired) {
         query.addSelect(['user.password']);
       }
