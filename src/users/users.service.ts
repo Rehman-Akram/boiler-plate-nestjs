@@ -264,7 +264,7 @@ export class UsersService {
       } else {
         await this.userRepo.update({ id: user.id }, data);
         const updatedUser = await this.findOneByOptionsAndRelations(
-          { id: user.id },
+          { id: user.id, userRoles: {isDeleted: false}, userGroups: {isDeleted: false} },
           {
             userRoles: {
               role: {
@@ -410,7 +410,7 @@ export class UsersService {
       }
       await this.userRepo.update({ id: user.id }, rest);
       return this.findOneByOptionsAndRelations(
-        { id: user.id },
+        { id: user.id, userRoles: {isDeleted: false}, userGroups: {isDeleted: false}},
         {
           userRoles: {
             role: {
