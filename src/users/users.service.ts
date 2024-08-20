@@ -85,6 +85,12 @@ export class UsersService {
         where: {
           id,
           status: UserStatus.ACTIVE,
+          userRoles: {
+            isDeleted: false
+          },
+          userGroups: {
+            isDeleted: false
+          },
         },
         relations: {
           userRoles: {
